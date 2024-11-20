@@ -1,0 +1,148 @@
+/* 원형 큐 */
+
+
+#define _CRT_SECURE_NO_WARNINGS			// 헤더파일 선언보다 앞서 선언해야 한다.
+#define MAX_SIZE	100	     			// 큐의 길이
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+
+typedef int Element;		// 큐 원소 자료형
+
+typedef enum {				// 큐에 사용할 명령 열거
+	EnQ,
+	DeQ,
+	DispayQ,
+	GetFront,
+	GetRear
+} Order;
+
+typedef struct {			// 길이가 100인 원형 큐 구조체
+	Element items[MAX_SIZE];
+	int front, rear;		
+} CQ;
+
+
+void initCQ(CQ*);			// 원형 큐 초기화
+bool is_full(CQ*);			// 원형 큐 포화 여부 확인
+bool is_empty(CQ*);			// 원형 큐 공백 여부 확인
+void enCQ(CQ*);				// 원형 큐에 자료 추가
+void deCQ(CQ*);				// 원형 큐에서 자료 제거
+void dispCQ(CQ*);			// 원형 큐 상태 표시
+void get_front(CQ*);		// front에 저장된 자료 표시
+void get_rear(CQ*);			// rear에 저장된 자료 표시
+
+
+int main() {
+	CQ cirQ;
+	Order order = { 0 };
+
+	printf("\n\t\t      ******** 원형 큐 명령 *******\t\n\n");
+	printf("\t\t\t0: 원형 큐에 자료 추가\n\n");
+	printf("\t\t\t1: 원형 큐에서 자료 제거\n\n");
+	printf("\t\t\t2: 원형 큐 상태 표시\n\n");
+	printf("\t\t\t3: front에 저장된 자료 표시\n\n");
+	printf("\t\t\t4: rear에 저장된 자료 표시\n");
+
+	printf("\n\t\t      *****************************\t\n\n\n");
+
+	initCQ(&cirQ);
+
+	while (true) {
+		printf("명령>> "); scanf("%d", &order);
+
+		switch(order) {
+			case        EnQ:      enCQ(&cirQ); break;
+			case        DeQ:      deCQ(&cirQ); break;
+			case    DispayQ:    dispCQ(&cirQ); break;
+			case   GetFront: get_front(&cirQ); break;
+			case    GetRear:  get_rear(&cirQ); break;
+			default: return;
+		}
+	}
+
+	return 0;
+}
+
+void initCQ(CQ* cirQ) {
+	cirQ->front = cirQ->rear = -1;
+}
+
+bool is_full(CQ* cirQ) {
+	return (cirQ->rear + 1) % MAX_SIZE == cirQ->front;
+}
+
+bool is_empty(CQ* cirQ) {
+	return cirQ->front == -1;
+}
+
+void enCQ(CQ* cirQ) {
+	Element item;
+
+	printf("\n<<Input>>: "); scanf("%d", &item);
+	printf("\n");
+	
+	if (is_full(cirQ)) {
+		fprintf(stderr,"\nThe Queue is full.\n\n"); return;
+	}
+	else if (is_empty(cirQ))
+		cirQ->front = 0;
+	
+	cirQ->rear = (cirQ->rear + 1) % MAX_SIZE;
+	cirQ->items[cirQ->rear] = item;
+		
+	printf("%d has been successfully added to the queue.\n", item);
+	printf("front: %d, rear: %d\n\n", cirQ->front, cirQ->rear);
+	
+	return;
+	
+}
+
+void deCQ(CQ* cirQ) {
+	if (is_empty(cirQ)) {
+		fprintf(stderr,"\nThe Queue is empty.\n\n"); return;
+	}
+	
+	printf("%d has been successfully removed from the queue.\n", cirQ->items[cirQ->front]);
+	printf("front: %d, rear: %d\n\n", cirQ->front, cirQ->rear);
+
+	if (cirQ->front == cirQ->rear)
+		cirQ->front = cirQ->rear = -1;
+	else {
+		cirQ->front = (cirQ->front + 1) % MAX_SIZE; return;
+	}
+}
+
+void dispCQ(CQ* cirQ) {
+	if (is_empty(cirQ)) {
+		fprintf(stderr, "\nThe Queue is empty.\n\n"); return;
+	}
+	else {
+		printf("\nThe Circular Queue Elements: {");
+		for (int i = cirQ->front; i <= cirQ->rear; i++)
+			printf("%d, ", cirQ->items[i]);
+
+		printf("\b\b}\n\n"); return;
+	}
+}
+
+void get_front(CQ* cirQ) {
+	if (is_empty(cirQ)) {
+		fprintf(stderr, "\nThe Queue is empty.\n\n"); return;
+	}
+	else {
+		printf("\nThe front element of the queue is %d.\n\n", cirQ->items[cirQ->front]); return;
+	}
+}
+
+void get_rear(CQ* cirQ) {
+	if (is_empty(cirQ)) {
+		fprintf(stderr, "\nThe Queue is empty.\n\n"); return;
+	}
+	else {
+		printf("\nThe rear element of the queue is %d.\n\n", cirQ->items[cirQ->rear]); return;
+	}
+}
