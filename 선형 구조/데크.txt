@@ -1,0 +1,91 @@
+/*
+  A deque (double-ended queue) is a linear data structure
+  that allows insertions and deletions at both its front and rear ends. Unlike stacks and queues, which are restricted to single-ended operations, deques offer more flexibility.
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#define MAX_SIZE 100 // Maximum size of the deque
+
+typedef struct
+{
+    int data[MAX_SIZE]; // An array to store the element
+    int front, rear;    // indexes of the front(rear) element
+} Deque;
+
+void initDeque(Deque *dq)
+{
+    dq->front = 0;
+    dq->rear = -1;
+}
+
+bool isFull(Deque *dq)
+{
+    return dq->rear == MAX_SIZE - 1;
+}
+
+bool isEmpty(Deque *dq)
+{
+    return dq->front > dq->rear;
+}
+
+void addFront(Deque *dq, int item)
+{
+    if (isFull(dq))
+    {
+        printf("Deque is full\n");
+        return;
+    }
+    dq->front--;
+    dq->data[dq->front] = item;
+}
+
+void addRear(Deque *dq, int item)
+{
+    if (isFull(dq))
+    {
+        printf("Deque is full \n");
+        return;
+    }
+    dq->rear++;
+    dq->data[dq->rear] = item;
+}
+
+int deleteFront(Deque *dq)
+{
+    if (isEmpty(dq))
+    {
+        printf("Deque is empty\n");
+        return -1;
+    }
+    int item = dq->data[dq->front];
+    dq->front++;
+    return item;
+}
+
+int deleteRear(Deque *dq)
+{
+    if (isEmpty(dq))
+    {
+        printf("Deque is empty\n");
+        return -1;
+    }
+
+    int item = dq->data[dq->rear];
+    dq->rear--;
+    return item;
+}
+
+int main()
+{
+    Deque dq;
+    initDeque(&dq);
+
+    addRear(&dq, 10);
+    addFront(&dq, 20);
+
+    printf("%d\n", deleteFront(&dq));
+
+    return 0;
+}
